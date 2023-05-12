@@ -4,6 +4,11 @@
  */
 package vista;
 
+import javax.swing.JOptionPane;
+import modelo.CifrarContraseña;
+import modelo.SQLUsuario;
+import modelo.Usuario;
+
 /**
  *
  * @author nick_
@@ -67,6 +72,11 @@ public class Registro extends javax.swing.JFrame {
 
         botonRegistrar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         botonRegistrar.setText("Registrar");
+        botonRegistrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonRegistrarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -124,6 +134,36 @@ public class Registro extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void botonRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonRegistrarActionPerformed
+        Usuario usuario = new Usuario();
+        SQLUsuario sqlUsuario = new SQLUsuario();
+        
+        String contraseña = new String(cajaContraseña.getPassword());
+        String ConfirmarContraseña = new String(cajaConfirmarContraseña.getPassword());
+        
+        if (cajaUsuario.getText().equals("") || contraseña.equals("") || ConfirmarContraseña.equals("") || cajaNombre.getText().equals("") || cajaCorreo.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "Por favor, rellene todos los campos");
+        } else {
+            if (contraseña.equals(ConfirmarContraseña)) {
+                String nuevaContraseña = CifrarContraseña.md5(contraseña);
+                usuario.setNombreUsuario(cajaUsuario.getText());
+                usuario.setContraseña(nuevaContraseña);
+                usuario.setNombre(cajaNombre.getText());
+                usuario.setCorreo(cajaCorreo.getText());
+                usuario.setIdTipo_usuario(1);
+                
+                if (sqlUsuario.registrar(usuario)) {
+                    JOptionPane.showMessageDialog(null, "Registro correcto");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Error al registrar usuario");
+                }
+            }
+            else{
+                JOptionPane.showMessageDialog(null, "Las contraseñas no coinciden");
+            }
+        }
+    }//GEN-LAST:event_botonRegistrarActionPerformed
 
     /**
      * @param args the command line arguments
