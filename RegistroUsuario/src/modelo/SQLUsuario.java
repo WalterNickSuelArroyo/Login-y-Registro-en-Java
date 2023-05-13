@@ -7,7 +7,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SQLUsuario {
-    public boolean registrar(Usuario usuario){
+
+    public boolean registrar(Usuario usuario) {
         Conexion con = new Conexion();
         PreparedStatement ps = null;
         try {
@@ -24,7 +25,8 @@ public class SQLUsuario {
             return false;
         }
     }
-    public int verificarUsuario(String usuario){
+
+    public int verificarUsuario(String usuario) {
         Conexion con = new Conexion();
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -42,9 +44,36 @@ public class SQLUsuario {
             return 1;
         }
     }
+
     public boolean comprobarEmail(String correo) {
         Pattern patron = Pattern.compile("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", Pattern.CASE_INSENSITIVE);
         Matcher matcher = patron.matcher(correo);
         return matcher.find();
+    }
+
+    public boolean iniciarSesion(Usuario usuario) {
+        Conexion con = new Conexion();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            Connection conexion = con.getConnection();
+            ps = conexion.prepareStatement("select id,nombreUsuario,contraseña,nombre,idTipo_usuario from usuario where nombreUsuario=? ");
+            ps.setString(1, usuario.getNombreUsuario());
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                if (usuario.getContraseña().equals(rs.getString("contraseña"))) {
+                    usuario.setId(rs.getInt("id"));
+                    usuario.setNombre(rs.getString("nombre"));
+                    usuario.setIdTipo_usuario(rs.getInt("idTipo_usuario"));
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+            return false;
+            
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
