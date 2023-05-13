@@ -62,6 +62,10 @@ public class SQLUsuario {
             rs = ps.executeQuery();
             if (rs.next()) {
                 if (usuario.getContraseña().equals(rs.getString("contraseña"))) {
+                    ps = conexion.prepareStatement("update usuario set ultima_sesion=? where id=?");
+                    ps.setString(1, usuario.getUltima_sesion());
+                    ps.setInt(2, rs.getInt("id"));
+                    ps.executeUpdate();
                     usuario.setId(rs.getInt("id"));
                     usuario.setNombre(rs.getString("nombre"));
                     usuario.setIdTipo_usuario(rs.getInt("idTipo_usuario"));

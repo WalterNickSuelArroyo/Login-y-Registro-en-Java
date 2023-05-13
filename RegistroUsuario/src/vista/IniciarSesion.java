@@ -4,6 +4,9 @@
  */
 package vista;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.JOptionPane;
 import modelo.CifrarContraseña;
 import modelo.SQLUsuario;
@@ -38,7 +41,12 @@ public class IniciarSesion extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         cajaContraseña = new javax.swing.JPasswordField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel1.setText("Usuario:");
@@ -108,6 +116,8 @@ public class IniciarSesion extends javax.swing.JFrame {
     private void botonIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonIniciarActionPerformed
         Usuario usuario = new Usuario();
         SQLUsuario sqlUsuario = new SQLUsuario();
+        Date date = new Date();
+        DateFormat fechaHora = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String contraseña = new String(cajaContraseña.getPassword());
         if (cajaUsuario.getText().equals("") || contraseña.equals("")) {
             JOptionPane.showMessageDialog(null, "Por favor, rellene todos los campos");
@@ -115,13 +125,21 @@ public class IniciarSesion extends javax.swing.JFrame {
             String nuevaContraseña = CifrarContraseña.md5(contraseña);
             usuario.setNombreUsuario(cajaUsuario.getText());
             usuario.setContraseña(nuevaContraseña);
+            usuario.setUltima_sesion(fechaHora.format(date));
             if (sqlUsuario.iniciarSesion(usuario)) {
-                JOptionPane.showMessageDialog(null, "Felicidades, acabas de ingresar a la aplicacion");
+                Inicio.iniciarSesion = null;
+                this.dispose();
+                Programa programa = new Programa();
+                programa.setVisible(true);
             } else {
                 JOptionPane.showMessageDialog(null, "Datos incorrectos");
             }
         }
     }//GEN-LAST:event_botonIniciarActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        Inicio.iniciarSesion = null;
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments

@@ -39,7 +39,12 @@ public class Registro extends javax.swing.JFrame {
         cajaCorreo = new javax.swing.JTextField();
         botonRegistrar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel1.setText("Usuario:");
@@ -170,6 +175,10 @@ public class Registro extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_botonRegistrarActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        Inicio.registro = null;
+    }//GEN-LAST:event_formWindowClosing
     private void limpiarCajas() {
         cajaUsuario.setText("");
         cajaContraseña.setText("");
